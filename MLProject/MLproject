@@ -1,0 +1,9 @@
+name: SMSML_CalebAnthony
+
+entry_points:
+  main:
+    parameters:
+      epochs: {type: int, default: 50}
+      batch_size: {type: int, default: 32}
+      learning_rate: {type: float, default: 0.001}
+    command: "python modelling.py --epochs {epochs} --batch_size {batch_size} --learning_rate {learning_rate}"
