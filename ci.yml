@@ -1,0 +1,54 @@
+# Example CI workflow kept in `Workflow-CI` for review before enabling.
+# To enable this workflow in GitHub Actions, copy this file to `.github/workflows/ci.yml`.
+
+name: Repository CI (example)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.12]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install monitoring & experiment requirements (light)
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f Eksperimen_SML_CalebAnthonyEvan/requirements.txt ]; then python -m pip install -r Eksperimen_SML_CalebAnthonyEvan/requirements.txt; fi
+          if [ -f Monitoring_dan_Logging/requirements.txt ]; then python -m pip install -r Monitoring_dan_Logging/requirements.txt; fi
+
+      - name: Run quick syntax checks
+        run: |
+          python -m compileall .
+
+      - name: Smoke import test (non-fatal)
+        run: |
+          python - <<'PY'
+          import sys
+          modules = ['pandas','numpy','sklearn','mlflow','prometheus_client','psutil']
+          missing = []
+          for m in modules:
+              try:
+                  __import__(m)
+              except Exception as e:
+                  missing.append((m,str(e)))
+          if missing:
+              print('Missing or failing imports (non-fatal):')
+              for m,err in missing:
+                  print(m, '->', err)
+          else:
+              print('Smoke import test passed')
+          PY
