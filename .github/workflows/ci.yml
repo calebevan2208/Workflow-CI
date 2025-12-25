@@ -36,7 +36,7 @@ jobs:
         run: |
           # Menjalankan project di folder Workflow-CI
           # --experiment-name HARUS SAMA dengan yang ada di script Python
-          mlflow run MLProject \
+          mlflow run ./MLProject \
             --env-manager=local \
             --experiment-name "CalebAnthony_Churn_DeepLearning_Tuning"
 
