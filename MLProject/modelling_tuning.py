@@ -100,14 +100,18 @@ def build_model(params, input_dim):
 def train_with_tuning():
     logger.info("=== Memulai Pipeline Tuning Deep Learning ===")
 
-    # 1. SETUP PATH & DATA
-    BASE_DIR = Path(__file__).resolve().parent
+    # 1. SETUP PATH & DATA (Disederhanakan sesuai Screenshot)
+    CURRENT_FILE = Path(__file__).resolve()
+    # Folder tempat script ini berada (yaitu folder 'MLProject')
+    BASE_DIR = CURRENT_FILE.parent 
 
-    # Logika pencarian data yang robust
+    print(f"DEBUG: Script berjalan di: {BASE_DIR}")
+
     possible_paths = [
-        BASE_DIR.parent / 'Eksperimen_SML_CalebAnthonyEvan' / 'churn_preprocessing' / 'clean_data.csv',
-        BASE_DIR.parent / 'Eksperimen_SML_CalebAnthonyEvan' / 'preprocessing' / 'churn_preprocessing' / 'clean_data.csv',
+        # Opsi 1: Data ada di folder churn_preprocessing di sebelah script (Sesuai Screenshot)
         BASE_DIR / 'churn_preprocessing' / 'clean_data.csv',
+        # Opsi 2: Cadangan (siapa tau ada di artifacts)
+        BASE_DIR / 'artifacts' / 'clean_data.csv'
     ]
 
     DATA_PATH = None
@@ -117,9 +121,11 @@ def train_with_tuning():
             break
 
     if DATA_PATH is None:
-        checked = '\n'.join(str(p) for p in possible_paths)
-        logger.error(f"Data tidak ditemukan. Telah memeriksa:\n{checked}")
-        return
+        print("\n❌ CRITICAL ERROR: File 'clean_data.csv' TIDAK DITEMUKAN!")
+        print("Mencari di:", [str(p) for p in possible_paths])
+        sys.exit(1)
+
+    print(f"✅ Data ditemukan di: {DATA_PATH}")
 
     logger.info(f"Data loaded form: {DATA_PATH}")
     df = pd.read_csv(DATA_PATH)
